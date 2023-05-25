@@ -27,7 +27,7 @@ export default function Login() {
     <section className="user-login-area">
 
       <form>
-        <h1>Área do usuário</h1>
+        <h1>Login</h1>
 
         <input
           className="login__login_input"
