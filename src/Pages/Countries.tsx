@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
+import Leagues from "./Leagues";
 
-const Countries = () => {
-  // const [teams, setTeams] = useState<IResult[]>([]);
+export default function Countries(): JSX.Element {
   const [countries, setCountries] = useState<IResult[]>([]);
-  const [country, setCountry] = useState<IResult[]>([]);
-  const [flags, setFlag] = useState<IResult[]>([]);
+  const [country, setCountry] = useState<string>('');
   const [failedTryLogin, setFailedTryLogin] = useState<boolean>(false);
 
   useEffect(() => {
@@ -20,21 +19,18 @@ const Countries = () => {
       });
 
       const jsonData = await data.json();
-      console.log(jsonData);
-      if (jsonData.errors.length === 0) {
-        setCountries(jsonData.response);
-        setFlag(jsonData.response);
-      } else {
+      if (jsonData.errors.length !== 0) {
         setFailedTryLogin(true);
+      } else {
+        setCountries(jsonData.response);
       }
     };
-    fetchData();
+    fetchData()
   }, []);
-  // console.log(countries);
 
-  const handleCountry = (event: any) => {
-    setCountry(event.target.value)
-  }
+  const handleCountry = (event: ChangeEvent<HTMLSelectElement>) => {
+    setCountry(event.target.value);
+  };
 
   return (
     <section className="countries-selection">
@@ -43,11 +39,12 @@ const Countries = () => {
           ? (
             <p data-testid="login__input_invalid_login_alert">
 
-              O Token digitado está incorreto.
+              API-Key Incorreta!
+              <br />
               Por favor, tente novamente.
               <br />
               <br />
-              Caso não tenha um token, clique <a target="_blank" href="https://dashboard.api-football.com/register" rel="noreferrer">aqui</a> para realizar seu cadastro na API-Sports.
+              Ainda não tem uma API-Key? Clique <a target="_blank" href="https://dashboard.api-football.com/register" rel="noreferrer">aqui</a> para realizar seu cadastro na API-Footbal.
 
             </p>
           )
@@ -60,8 +57,12 @@ const Countries = () => {
             </select>
           </>
       }
+      {
+        (country)
+          ?
+          <Leagues failedTryLogin={failedTryLogin} country={country} />
+          : null
+      }
     </section>
   )
-}
-
-export default Countries;
+};

@@ -6,6 +6,4 @@ export interface IResult {
   season: number;
   country: string;
   code: string;
-  venue: number;
-  search: string;
 }
