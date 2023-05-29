@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
 import Leagues from "./Leagues";
+import Loading from "./Loading";
 
 export default function Countries(): JSX.Element {
   const [countries, setCountries] = useState<IResult[]>([]);
@@ -34,6 +35,10 @@ export default function Countries(): JSX.Element {
 
   const handleCountry = (event: ChangeEvent<HTMLSelectElement>) => {
     setCountry(event.target.value);
+  };
+
+  if (!countries.length) {
+    return (<Loading />);
   };
 
   return (
