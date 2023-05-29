@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ILeague } from "../Interfaces/ILeague";
+import Loading from "./Loading";
 
 export default function Teams({ country, leagueId }: any): JSX.Element {
   const [teams, setTeams] = useState<ILeague[] | any>([]);
@@ -27,6 +28,9 @@ export default function Teams({ country, leagueId }: any): JSX.Element {
   }, [country, leagueId]);
   console.log(teams);
 
+  if (!teams.length) {
+    return (<Loading />);
+  };
 
   return (
     <section className="countries-selection">
