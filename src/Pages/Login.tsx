@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router";
 
 export default function Login(): JSX.Element {
   const [user, setUser] = useState<string | any>('');
