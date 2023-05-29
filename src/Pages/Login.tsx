@@ -27,7 +27,8 @@ export default function Login(): JSX.Element {
     <section className="user-login-area">
 
       <form>
-        <h1>Área do usuário</h1>
+        <h1>Meu Time</h1>
+        <h3>Login</h3>
 
         <input
           className="login__login_input"
