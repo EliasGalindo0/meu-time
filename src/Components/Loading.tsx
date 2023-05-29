@@ -4,7 +4,10 @@ export default function Loading(): JSX.Element {
       {
         <>
           <p>Carregando...</p>
-          <img src="https://portal.ufvjm.edu.br/a-universidade/cursos/grade_curricular_ckan/loading.gif/loading.gif" alt="loading" width="50px" />
+          <img
+            className="footbal-loading"
+            src="https://w7.pngwing.com/pngs/248/249/png-transparent-american-football-football-team-football-sport-sports-equipment-football-team.png"
+            alt="loading" />
         </>
 
       }
