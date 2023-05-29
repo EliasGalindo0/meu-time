@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 import './App.css';
-import Countries from './Pages/Countries';
+import Countries from './Components/Countries';
 import Login from './Pages/Login';
 
 function App() {
@@ -15,6 +15,6 @@ function App() {
       </header>
     </div>
   );
-}
+};
 
 export default App;

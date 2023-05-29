@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router";
 
-export default function Login() {
+export default function Login(): JSX.Element {
   const [user, setUser] = useState<string | any>('');
   const [token, setToken] = useState<string | any>('');
   const [isLogged, setIsLogged] = useState<boolean>(false);
@@ -27,7 +27,7 @@ export default function Login() {
     <section className="user-login-area">
 
       <form>
-        <h1>Login</h1>
+        <h1>Área do usuário</h1>
 
         <input
           className="login__login_input"
@@ -43,7 +43,7 @@ export default function Login() {
           value={token}
           onChange={({ target: { value } }) => setToken(value)}
           data-testid="login__password_input"
-          placeholder="API Key"
+          placeholder="API-Key"
         />
         <br />
         <button
