@@ -3,31 +3,35 @@ import { ILeague } from "../Interfaces/ILeague";
 import Teams from "./Teams";
 import Loading from "./Loading";
 
-export default function Leagues({ country, failedLogin }: any): JSX.Element {
+export default function Leagues({ country, failedLogin }: ILeague): JSX.Element {
   const [leagues, setLeagues] = useState<ILeague[] | any>([]);
   const [leagueId, setLeagueId] = useState<number | any>();
+  const [season, setSeason] = useState<number | any>();
 
   useEffect(() => {
-    const fetchLeagues = async (country: string) => {
+    const fetchLeagues = async () => {
       try {
         const token = localStorage.getItem('token');
         if (country) {
-          const result = await fetch(`${process.env.REACT_APP_URL_LEAGUES}${country}` as string, {
+          const response = await fetch(`${process.env.REACT_APP_URL_LEAGUES}${country}` as string, {
             "method": "GET",
             "headers": {
               "x-rapidapi-host": "v3.football.api-sports.io",
               "x-rapidapi-key": `${token}`
             }
           });
-          const jsonData = await result.json();
-          setLeagues(jsonData.response);
+          const leagueData = await response.json();
+          setLeagues(leagueData.response);
         };
       } catch (error) {
-        console.error(error);
+        window.alert(error);
       }
     };
-    fetchLeagues(country);
+    fetchLeagues();
   }, [country, leagueId]);
+  console.log(leagues);
+  console.log(season);
+
 
   if (!leagues.length) {
     return (<Loading />);
@@ -49,10 +53,15 @@ export default function Leagues({ country, failedLogin }: any): JSX.Element {
           )
           :
           <>
-            <p>Selecione uma Liga</p>
+            <p>Selecione uma Liga e uma Temporada</p>
             <select onChange={({ target: { value } }) => setLeagueId(value)}>
               {leagues.map((league: ILeague | any) => (
-                <option key={league.league.id} value={league.league.id}>{`${league.league.name} `}</option>
+                <option key={league.league.id} value={league.league.id}>{league.league.name}</option>
+              ))}
+            </select>
+            <select onChange={({ target: { value } }) => setSeason(value)}>
+              {leagues.map((league: ILeague | any) => (
+                <option key={Math.random()} value={league.seasons.year}>{league.seasons.year}</option>
               ))}
             </select>
           </>
@@ -60,7 +69,7 @@ export default function Leagues({ country, failedLogin }: any): JSX.Element {
       {
         (leagueId)
           ?
-          <Teams country={country} leagueId={leagueId} />
+          <Teams country={country} leagueId={leagueId} season={season} />
           : null
       }
     </section>
