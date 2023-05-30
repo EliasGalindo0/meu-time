@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
 import Leagues from "./Leagues";
 import Loading from "./Loading";
-import FailedLogin from "./FailedLogin";
+import Error from "./Error";
 import { IError } from "../Interfaces/IError";
 
 export default function Countries(): JSX.Element {
@@ -15,7 +15,7 @@ export default function Countries(): JSX.Element {
     const token = localStorage.getItem('token');
     const fetchCountries = async (): Promise<any> => {
       try {
-        const data = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
+        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
           "method": "GET",
           "headers": {
             "x-rapidapi-host": "v3.football.api-sports.io",
@@ -23,7 +23,7 @@ export default function Countries(): JSX.Element {
           }
         });
 
-        const countriesData = await data.json();
+        const countriesData = await response.json();
         if (countriesData.errors) {
           setFailedLogin(true);
           setError(countriesData.errors.requests);
@@ -31,13 +31,11 @@ export default function Countries(): JSX.Element {
           setCountries(countriesData.response);
         }
       } catch (error) {
-        window.alert(error);
+        console.error(error);
       }
     };
     fetchCountries()
   }, []);
-
-  console.log(error);
 
   const handleCountry = (event: ChangeEvent<HTMLSelectElement>) => {
     setCountry(event.target.value);
@@ -52,7 +50,7 @@ export default function Countries(): JSX.Element {
       {
         (failedLogin)
           ?
-          <FailedLogin error={error} />
+          <Error error={error} />
           : <>
             <p>Selecione um país</p>
             <select onChange={handleCountry}>

@@ -1,10 +1,10 @@
 import { IError } from "../Interfaces/IError";
 
-export default function FailedLogin({ error }: IError): JSX.Element {
+export default function Error({ error }: IError): JSX.Element {
   return (
-    <section className="failedLogin">
+    <section className="error">
       {
-        <p data-testid="login__input_invalid_login_alert">
+        <p data-testid="error_report">
           {error}
           <br />
           <br />

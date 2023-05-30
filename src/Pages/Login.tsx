@@ -5,6 +5,7 @@ export default function Login(): JSX.Element {
   const [user, setUser] = useState<string | any>('');
   const [token, setToken] = useState<string | any>('');
   const [isLogged, setIsLogged] = useState<boolean>(false);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
 
   const login = async (event: any) => {
     event.preventDefault();
@@ -16,14 +17,23 @@ export default function Login(): JSX.Element {
 
       setIsLogged(true);
     } catch (error) {
-      window.alert(error);
+      console.error(error);
+    }
+  };
+
+  const handlePasswordChange = (event: any) => {
+    const tokenLength: any = process.env.REACT_APP_API_KEY;
+    setToken(event.target.value);
+    if (event.target.value.length < tokenLength.length) {
+      setButtonDisabled(true);
+    } else {
+      setButtonDisabled(false);
     }
   };
 
   if (isLogged) return <Navigate to="/countries" />;
 
   return (
-
     <section className="user-login-area">
 
       <form>
@@ -40,18 +50,21 @@ export default function Login(): JSX.Element {
         />
 
         <input
+          id="password"
           type="password"
           value={token}
-          onChange={({ target: { value } }) => setToken(value)}
+          onChange={handlePasswordChange}
           data-testid="login__password_input"
           placeholder="API-Key"
           required
         />
         <br />
         <button
+          id="submit"
           data-testid="login__login_btn"
           type="submit"
           onClick={(event) => login(event)}
+          disabled={buttonDisabled}
         >
           Entrar
         </button>

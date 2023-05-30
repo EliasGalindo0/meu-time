@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ILeague, ILeagueMap } from "../Interfaces/ILeague";
 import Teams from "./Teams";
 import Loading from "./Loading";
-import FailedLogin from "./FailedLogin";
+import Error from "./Error";
 
 export default function Leagues({ country, failedLogin, error }: ILeague): JSX.Element {
   const [leagues, setLeagues] = useState<ILeague[] | any>([]);
@@ -26,7 +26,7 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
           setLeagues(leagueData.response);
         };
       } catch (error) {
-        window.alert(error);
+        console.error(error);
       }
     };
     fetchLeagues();
@@ -64,7 +64,7 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
       {
         (failedLogin)
           ?
-          <FailedLogin error={error} />
+          <Error error={error} />
           :
           <>
             <p>Selecione uma Liga e uma Temporada</p>
@@ -83,7 +83,7 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
       {
         (leagueId)
           ?
-          <Teams country={country} leagueId={leagueId} season={season} />
+          <Teams country={country} leagueId={leagueId} season={season} failedLogin={failedLogin} />
           : null
       }
     </section>
