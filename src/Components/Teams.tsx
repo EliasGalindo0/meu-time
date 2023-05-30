@@ -7,7 +7,7 @@ export default function Teams({ country, leagueId, season }: ITeam): JSX.Element
   const [teams, setTeams] = useState<ILeague[] | any>([]);
 
   useEffect(() => {
-    const fetchTeams = async (country: string) => {
+    const fetchTeams = async () => {
       try {
         const token = localStorage.getItem('token');
         if (country && leagueId && season) {
@@ -18,14 +18,14 @@ export default function Teams({ country, leagueId, season }: ITeam): JSX.Element
               "x-rapidapi-key": `${token}`
             }
           });
-          const jsonData = await result.json();
-          setTeams(jsonData.response);
+          const teamsData = await result.json();
+          setTeams(teamsData.response);
         };
       } catch (error) {
         console.error(error);
       }
     };
-    fetchTeams(country);
+    fetchTeams();
   }, [country, leagueId, season]);
   console.log(teams);
 

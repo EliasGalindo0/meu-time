@@ -16,7 +16,7 @@ export default function Login(): JSX.Element {
 
       setIsLogged(true);
     } catch (error) {
-      console.error(error);
+      window.alert(error);
     }
   };
 
@@ -45,6 +45,7 @@ export default function Login(): JSX.Element {
           onChange={({ target: { value } }) => setToken(value)}
           data-testid="login__password_input"
           placeholder="API-Key"
+          required
         />
         <br />
         <button

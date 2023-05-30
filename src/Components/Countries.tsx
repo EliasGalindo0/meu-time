@@ -2,15 +2,18 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
 import Leagues from "./Leagues";
 import Loading from "./Loading";
+import FailedLogin from "./FailedLogin";
+import { IError } from "../Interfaces/IError";
 
 export default function Countries(): JSX.Element {
   const [countries, setCountries] = useState<IResult[]>([]);
   const [country, setCountry] = useState<string>('');
   const [failedLogin, setFailedLogin] = useState<boolean>(false);
+  const [error, setError] = useState<IError | any>('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const fetchData = async (): Promise<any> => {
+    const fetchCountries = async (): Promise<any> => {
       try {
         const data = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
           "method": "GET",
@@ -20,24 +23,27 @@ export default function Countries(): JSX.Element {
           }
         });
 
-        const jsonData = await data.json();
-        if (jsonData.errors.length === 0) {
-          setCountries(jsonData.response);
-        } else {
+        const countriesData = await data.json();
+        if (countriesData.errors) {
           setFailedLogin(true);
-        };
+          setError(countriesData.errors.requests);
+        } else {
+          setCountries(countriesData.response);
+        }
       } catch (error) {
-        console.error(error);
+        window.alert(error);
       }
     };
-    fetchData()
+    fetchCountries()
   }, []);
+
+  console.log(error);
 
   const handleCountry = (event: ChangeEvent<HTMLSelectElement>) => {
     setCountry(event.target.value);
   };
 
-  if (!countries.length) {
+  if (!countries.length && !failedLogin) {
     return (<Loading />);
   };
 
@@ -45,16 +51,8 @@ export default function Countries(): JSX.Element {
     <section className="countries-selection">
       {
         (failedLogin)
-          ? (
-            <p data-testid="login__input_invalid_login_alert">
-              API-Key Incorreta!
-              <br />
-              Por favor, tente novamente.
-              <br />
-              <br />
-              Ainda não tem uma API-Key? Clique <a target="_blank" href="https://dashboard.api-football.com/register" rel="noreferrer">aqui</a> para realizar seu cadastro na API-Footbal.
-            </p>
-          )
+          ?
+          <FailedLogin error={error} />
           : <>
             <p>Selecione um país</p>
             <select onChange={handleCountry}>
