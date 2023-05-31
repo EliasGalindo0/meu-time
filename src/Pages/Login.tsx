@@ -56,7 +56,6 @@ export default function Login(): JSX.Element {
           onChange={handlePasswordChange}
           data-testid="login__password_input"
           placeholder="API-Key"
-          required
         />
         <br />
         <button

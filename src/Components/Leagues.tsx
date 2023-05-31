@@ -6,23 +6,23 @@ import Error from "./Error";
 
 export default function Leagues({ country, failedLogin, error }: ILeague): JSX.Element {
   const [leagues, setLeagues] = useState<ILeague[] | any>([]);
-  const [leagueId, setLeagueId] = useState<number | any>();
-  const [seasons, setSeasons] = useState<number | any>(0);
-  const [season, setSeason] = useState<number | any>(0);
+  const [leagueId, setLeagueId] = useState<ILeague | any>();
+  const [seasons, setSeasons] = useState<ILeague | any>();
+  const [season, setSeason] = useState<ILeague | any>();
 
   useEffect(() => {
     const fetchLeagues = async () => {
       try {
         const token = localStorage.getItem('token');
         if (country) {
-          const response = await fetch(`${process.env.REACT_APP_URL_LEAGUES}${country}` as string, {
+          const result = await fetch(`${process.env.REACT_APP_URL_LEAGUES}${country}` as string, {
             "method": "GET",
             "headers": {
               "x-rapidapi-host": "v3.football.api-sports.io",
               "x-rapidapi-key": `${token}`
             }
           });
-          const leagueData = await response.json();
+          const leagueData = await result.json();
           setLeagues(leagueData.response);
         };
       } catch (error) {
@@ -37,18 +37,18 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
       try {
         const token = localStorage.getItem('token');
         if (country) {
-          const response = await fetch(process.env.RREACT_APP_URL_SEASONS as string, {
+          const response = await fetch(process.env.REACT_APP_URL_SEASONS as string, {
             "method": "GET",
             "headers": {
               "x-rapidapi-host": "v3.football.api-sports.io",
               "x-rapidapi-key": `${token}`
             }
           });
-          const leagueData = await response.json();
-          setSeasons(leagueData.response);
+          const seasonData = await response.json();
+          setSeasons(seasonData.response);
         };
       } catch (error) {
-        window.alert(error);
+        console.error(error);
       }
     };
     fetchSeasons();
@@ -74,16 +74,16 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
               ))}
             </select>
             <select onChange={({ target: { value } }) => setSeason(value)}>
-              {seasons.map((season: ILeagueMap) => (
-                <option key={Math.random()} value={season.year}>{season.year}</option>
+              {seasons.map((season: number) => (
+                <option key={Math.random()} value={season}>{season}</option>
               ))}
             </select>
           </>
       }
       {
-        (leagueId)
+        (leagueId && season)
           ?
-          <Teams country={country} leagueId={leagueId} season={season} failedLogin={failedLogin} />
+          <Teams country={country} leagueId={leagueId} season={season} failedLogin={failedLogin} error={error} />
           : null
       }
     </section>

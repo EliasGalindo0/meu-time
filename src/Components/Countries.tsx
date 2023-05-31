@@ -10,12 +10,13 @@ export default function Countries(): JSX.Element {
   const [country, setCountry] = useState<string>('');
   const [failedLogin, setFailedLogin] = useState<boolean>(false);
   const [error, setError] = useState<IError | any>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const fetchCountries = async (): Promise<any> => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
+        const result = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
           "method": "GET",
           "headers": {
             "x-rapidapi-host": "v3.football.api-sports.io",
@@ -23,15 +24,17 @@ export default function Countries(): JSX.Element {
           }
         });
 
-        const countriesData = await response.json();
-        if (countriesData.errors) {
+        const countriesData = await result.json();
+        if (countriesData.errors.length === 0) {
+          setCountries(countriesData.response);
+        } else {
           setFailedLogin(true);
           setError(countriesData.errors.requests);
-        } else {
-          setCountries(countriesData.response);
         }
+        setLoading(false);
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
     fetchCountries()
@@ -41,7 +44,7 @@ export default function Countries(): JSX.Element {
     setCountry(event.target.value);
   };
 
-  if (!countries.length && !failedLogin) {
+  if (loading) {
     return (<Loading />);
   };
 

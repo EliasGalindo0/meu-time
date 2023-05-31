@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { ILeague } from "../Interfaces/ILeague";
 import Loading from "./Loading";
 import { ITeam } from "../Interfaces/ITeam";
 import Error from "./Error";
+import { ITeamsProps } from "../Interfaces/ITeamsProps";
 
-export default function Teams({ country, leagueId, season, failedLogin, error }: ITeam): JSX.Element {
-  const [teams, setTeams] = useState<ILeague[] | any>([]);
+export default function Teams({ country, leagueId, season, failedLogin, error }: ITeamsProps): JSX.Element {
+  const [teams, setTeams] = useState<ITeam[]>([]);
+  const [teamId, setTeamId] = useState<number | string>();
 
   useEffect(() => {
     const fetchTeams = async () => {
@@ -20,7 +21,11 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
             }
           });
           const teamsData = await result.json();
-          setTeams(teamsData.response);
+          const teamsMap = teamsData.response[0].teams.map((team: {
+            name: string;
+            id: number;
+          }) => ({ name: team.name, id: team.id }));
+          setTeams(teamsMap);
         };
       } catch (error) {
         console.error(error);
@@ -29,6 +34,7 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
     fetchTeams();
   }, [country, leagueId, season]);
   console.log(teams);
+  console.log(teamId);
 
   if (!teams.length) {
     return (<Loading />);
@@ -43,8 +49,8 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
           :
           <>
             <p>Selecione um Time</p>
-            <select>
-              {teams.map((team: ILeague | any) => (
+            <select onChange={({ target: { value } }) => setTeamId(value)}>
+              {teams.map((team: ITeam) => (
                 <option key={team.id} value={team.id}>{`${team.name} `}</option>
               ))}
             </select>
