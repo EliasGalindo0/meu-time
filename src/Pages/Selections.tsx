@@ -1,8 +1,8 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
-import Leagues from "./Leagues";
-import Loading from "./Loading";
-import Error from "./Error";
+import Leagues from "../Components/Leagues";
+import Loading from "../Components/Loading";
+import Error from "../Components/Error";
 import { IError } from "../Interfaces/IError";
 
 export default function Countries(): JSX.Element {

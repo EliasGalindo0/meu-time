@@ -22,10 +22,6 @@ export default function Teams({ leagueId, season, failedLogin, error }: ITeamsPr
           });
           const teamsData = await result.json();
           const teamsMap = teamsData.response.map((item: { team: string[]; }) => item.team);
-          // const teamsMap = teamsData.response[0].teams.map((team: {
-          //   name: string;
-          //   id: number;
-          // }) => ({ name: team.name, id: team.id }));
           setTeams(teamsMap);
         };
       } catch (error) {
@@ -37,12 +33,16 @@ export default function Teams({ leagueId, season, failedLogin, error }: ITeamsPr
   console.log(teams);
   console.log(teamId);
 
+  // const handleSelectChange = (event) => {
+  //   setSelectedValue(event.target.value);
+  // };
+
   if (!teams.length) {
     return (<Loading />);
   };
 
   return (
-    <section className="countries-selection">
+    <section className="teams-selection">
       {
         (failedLogin)
           ?
@@ -50,7 +50,10 @@ export default function Teams({ leagueId, season, failedLogin, error }: ITeamsPr
           :
           <>
             <p>Selecione um Time</p>
-            <select onChange={({ target: { value } }) => setTeamId(value)}>
+            <select value={teamId} onChange={({ target: { value } }) => {
+              console.log(value);
+              setTeamId(value)
+            }}>
               {teams.map((team: ITeam) => (
                 <option key={team.id} value={team.id}>{team.name}</option>
               ))}

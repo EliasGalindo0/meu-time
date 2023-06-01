@@ -1,6 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router';
 import './App.css';
-import Countries from './Components/Countries';
+import Selections from './Pages/Selections';
 import Login from './Pages/Login';
 
 function App() {
@@ -9,7 +9,7 @@ function App() {
       <header className="App-header">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/countries" element={<Countries />} />
+          <Route path="/selections" element={<Selections />} />
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </header>

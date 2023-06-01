@@ -31,7 +31,7 @@ export default function Login(): JSX.Element {
     }
   };
 
-  if (isLogged) return <Navigate to="/countries" />;
+  if (isLogged) return <Navigate to="/selections" />;
 
   return (
     <section className="user-login-area">

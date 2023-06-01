@@ -6,9 +6,9 @@ import Error from "./Error";
 
 export default function Leagues({ country, failedLogin, error }: ILeague): JSX.Element {
   const [leagues, setLeagues] = useState<ILeague[] | any>([]);
-  const [leagueId, setLeagueId] = useState<ILeague | any>();
+  const [leagueId, setLeagueId] = useState<ILeague | any>(0);
   const [seasons, setSeasons] = useState<ILeague | any>();
-  const [season, setSeason] = useState<ILeague | any>();
+  const [season, setSeason] = useState<ILeague | any>('');
 
   useEffect(() => {
     const fetchLeagues = async () => {
@@ -59,7 +59,7 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
   };
 
   return (
-    <section className="countries-selection">
+    <section className="leagues-selection">
       {
         (failedLogin)
           ?
@@ -67,14 +67,14 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
           :
           <>
             <p>Selecione uma Liga e uma Temporada</p>
-            <select onChange={({ target: { value } }) => setLeagueId(value)}>
+            <select value={leagueId} onChange={({ target: { value } }) => setLeagueId(value)}>
               {leagues.map((league: ILeagueMap) => (
                 <option key={league.league.id} value={league.league.id}>{league.league.name}</option>
               ))}
             </select>
-            <select onChange={({ target: { value } }) => setSeason(value)}>
-              {seasons.map((season: number) => (
-                <option key={Math.random()} value={season}>{season}</option>
+            <select value={season} onChange={({ target: { value } }) => setSeason(value)}>
+              {seasons && seasons.map((season: number) => (
+                <option key={season} value={season}>{season}</option>
               ))}
             </select>
           </>
@@ -85,6 +85,6 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
           <Teams leagueId={leagueId} season={season} failedLogin={failedLogin} error={error} />
           : null
       }
-    </section>
+    </section >
   )
 };
