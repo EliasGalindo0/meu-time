@@ -1,18 +1,22 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IResult } from "../Interfaces/IResult";
-import Leagues from "./Leagues";
-import Loading from "./Loading";
+import Leagues from "../Components/Leagues";
+import Loading from "../Components/Loading";
+import Error from "../Components/Error";
+import { IError } from "../Interfaces/IError";
 
 export default function Countries(): JSX.Element {
   const [countries, setCountries] = useState<IResult[]>([]);
   const [country, setCountry] = useState<string>('');
   const [failedLogin, setFailedLogin] = useState<boolean>(false);
+  const [error, setError] = useState<IError | any>('');
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const fetchData = async (): Promise<any> => {
+    const fetchCountries = async (): Promise<any> => {
       try {
-        const data = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
+        const result = await fetch(`${process.env.REACT_APP_BASE_URL}/countries` as string, {
           "method": "GET",
           "headers": {
             "x-rapidapi-host": "v3.football.api-sports.io",
@@ -20,24 +24,27 @@ export default function Countries(): JSX.Element {
           }
         });
 
-        const jsonData = await data.json();
-        if (jsonData.errors.length === 0) {
-          setCountries(jsonData.response);
+        const countriesData = await result.json();
+        if (countriesData.errors.length === 0) {
+          setCountries(countriesData.response);
         } else {
           setFailedLogin(true);
-        };
+          setError(countriesData.errors.requests);
+        }
+        setLoading(false);
       } catch (error) {
         console.error(error);
+        setLoading(false);
       }
     };
-    fetchData()
+    fetchCountries()
   }, []);
 
   const handleCountry = (event: ChangeEvent<HTMLSelectElement>) => {
     setCountry(event.target.value);
   };
 
-  if (!countries.length) {
+  if (loading) {
     return (<Loading />);
   };
 
@@ -45,16 +52,8 @@ export default function Countries(): JSX.Element {
     <section className="countries-selection">
       {
         (failedLogin)
-          ? (
-            <p data-testid="login__input_invalid_login_alert">
-              API-Key Incorreta!
-              <br />
-              Por favor, tente novamente.
-              <br />
-              <br />
-              Ainda não tem uma API-Key? Clique <a target="_blank" href="https://dashboard.api-football.com/register" rel="noreferrer">aqui</a> para realizar seu cadastro na API-Footbal.
-            </p>
-          )
+          ?
+          <Error error={error} />
           : <>
             <p>Selecione um país</p>
             <select onChange={handleCountry}>

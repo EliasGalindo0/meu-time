@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { ILeague } from "../Interfaces/ILeague";
+import { ILeague, ILeagueMap } from "../Interfaces/ILeague";
 import Teams from "./Teams";
 import Loading from "./Loading";
+import Error from "./Error";
 
-export default function Leagues({ country, failedLogin }: any): JSX.Element {
+export default function Leagues({ country, failedLogin, error }: ILeague): JSX.Element {
   const [leagues, setLeagues] = useState<ILeague[] | any>([]);
-  const [leagueId, setLeagueId] = useState<number | any>();
+  const [leagueId, setLeagueId] = useState<ILeague | any>(0);
+  const [seasons, setSeasons] = useState<ILeague | any>();
+  const [season, setSeason] = useState<ILeague | any>('');
 
   useEffect(() => {
-    const fetchLeagues = async (country: string) => {
+    const fetchLeagues = async () => {
       try {
         const token = localStorage.getItem('token');
         if (country) {
@@ -19,50 +22,69 @@ export default function Leagues({ country, failedLogin }: any): JSX.Element {
               "x-rapidapi-key": `${token}`
             }
           });
-          const jsonData = await result.json();
-          setLeagues(jsonData.response);
+          const leagueData = await result.json();
+          setLeagues(leagueData.response);
         };
       } catch (error) {
         console.error(error);
       }
     };
-    fetchLeagues(country);
+    fetchLeagues();
   }, [country, leagueId]);
+
+  useEffect(() => {
+    const fetchSeasons = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (country) {
+          const response = await fetch(process.env.REACT_APP_URL_SEASONS as string, {
+            "method": "GET",
+            "headers": {
+              "x-rapidapi-host": "v3.football.api-sports.io",
+              "x-rapidapi-key": `${token}`
+            }
+          });
+          const seasonData = await response.json();
+          setSeasons(seasonData.response);
+        };
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchSeasons();
+  }, [country]);
 
   if (!leagues.length) {
     return (<Loading />);
   };
 
   return (
-    <section className="countries-selection">
+    <section className="leagues-selection">
       {
         (failedLogin)
-          ? (
-            <p data-testid="login__input_invalid_login_alert">
-              Ocorreu algum problema com a requisição dos dados!
-              <br />
-              Por favor, tente novamente mais tarde.
-              <br />
-              <br />
-              Caso não tenha uma API-Key? Clique <a target="_blank" href="https://dashboard.api-football.com/register" rel="noreferrer">aqui</a>.
-            </p>
-          )
+          ?
+          <Error error={error} />
           :
           <>
-            <p>Selecione uma Liga</p>
-            <select onChange={({ target: { value } }) => setLeagueId(value)}>
-              {leagues.map((league: ILeague | any) => (
-                <option key={league.league.id} value={league.league.id}>{`${league.league.name} `}</option>
+            <p>Selecione uma Liga e uma Temporada</p>
+            <select value={leagueId} onChange={({ target: { value } }) => setLeagueId(value)}>
+              {leagues.map((league: ILeagueMap) => (
+                <option key={league.league.id} value={league.league.id}>{league.league.name}</option>
+              ))}
+            </select>
+            <select value={season} onChange={({ target: { value } }) => setSeason(value)}>
+              {seasons && seasons.map((season: number) => (
+                <option key={season} value={season}>{season}</option>
               ))}
             </select>
           </>
       }
       {
-        (leagueId)
+        (leagueId && season)
           ?
-          <Teams country={country} leagueId={leagueId} />
+          <Teams leagueId={leagueId} season={season} failedLogin={failedLogin} error={error} />
           : null
       }
-    </section>
+    </section >
   )
 };

@@ -1,48 +1,64 @@
 import { useEffect, useState } from "react";
-import { ILeague } from "../Interfaces/ILeague";
 import Loading from "./Loading";
+import { ITeam } from "../Interfaces/ITeam";
+import Error from "./Error";
+import { ITeamsProps } from "../Interfaces/ITeamsProps";
 
-export default function Teams({ country, leagueId }: any): JSX.Element {
-  const [teams, setTeams] = useState<ILeague[] | any>([]);
+export default function Teams({ leagueId, season, failedLogin, error }: ITeamsProps): JSX.Element {
+  const [teams, setTeams] = useState<ITeam[]>([]);
+  const [teamId, setTeamId] = useState<number | string>();
 
   useEffect(() => {
-    const fetchTeams = async (country: string) => {
+    const fetchTeams = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (country && leagueId) {
-          const result = await fetch(`${process.env.REACT_APP_URL_TEAMS}${leagueId}country=${country}` as string, {
+        if (leagueId && season) {
+          const result = await fetch(`${process.env.REACT_APP_URL_TEAMS}${leagueId}&season=${season}` as string, {
             "method": "GET",
             "headers": {
               "x-rapidapi-host": "v3.football.api-sports.io",
               "x-rapidapi-key": `${token}`
             }
           });
-          const jsonData = await result.json();
-          setTeams(jsonData.response);
+          const teamsData = await result.json();
+          const teamsMap = teamsData.response.map((item: { team: string[]; }) => item.team);
+          setTeams(teamsMap);
         };
       } catch (error) {
         console.error(error);
       }
     };
-    fetchTeams(country);
-  }, [country, leagueId]);
+    fetchTeams();
+  }, [leagueId, season]);
   console.log(teams);
+  console.log(teamId);
+
+  // const handleSelectChange = (event) => {
+  //   setSelectedValue(event.target.value);
+  // };
 
   if (!teams.length) {
     return (<Loading />);
   };
 
   return (
-    <section className="countries-selection">
+    <section className="teams-selection">
       {
-        <>
-          <p>Selecione um Time</p>
-          <select>
-            {teams.map((team: ILeague | any) => (
-              <option key={team.id} value={team.id}>{`${team.name} `}</option>
-            ))}
-          </select>
-        </>
+        (failedLogin)
+          ?
+          <Error error={error} />
+          :
+          <>
+            <p>Selecione um Time</p>
+            <select value={teamId} onChange={({ target: { value } }) => {
+              console.log(value);
+              setTeamId(value)
+            }}>
+              {teams.map((team: ITeam) => (
+                <option key={team.id} value={team.id}>{team.name}</option>
+              ))}
+            </select>
+          </>
       }
     </section>
   )

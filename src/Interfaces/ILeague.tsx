@@ -1,6 +1,9 @@
 export interface ILeague {
   country: string;
-  league: string;
-  name: string;
-  id: number;
-}
+  failedLogin: boolean;
+  error?: string;
+};
+
+export interface ILeagueMap {
+  league?: ILeague | any;
+};
