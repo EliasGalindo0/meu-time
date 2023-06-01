@@ -4,7 +4,7 @@ import { ITeam } from "../Interfaces/ITeam";
 import Error from "./Error";
 import { ITeamsProps } from "../Interfaces/ITeamsProps";
 
-export default function Teams({ country, leagueId, season, failedLogin, error }: ITeamsProps): JSX.Element {
+export default function Teams({ leagueId, season, failedLogin, error }: ITeamsProps): JSX.Element {
   const [teams, setTeams] = useState<ITeam[]>([]);
   const [teamId, setTeamId] = useState<number | string>();
 
@@ -12,8 +12,8 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
     const fetchTeams = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (country && leagueId && season) {
-          const result = await fetch(`${process.env.REACT_APP_URL_TEAMS}${country}&league=${leagueId}&season=${season}` as string, {
+        if (leagueId && season) {
+          const result = await fetch(`${process.env.REACT_APP_URL_TEAMS}${leagueId}&season=${season}` as string, {
             "method": "GET",
             "headers": {
               "x-rapidapi-host": "v3.football.api-sports.io",
@@ -21,10 +21,11 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
             }
           });
           const teamsData = await result.json();
-          const teamsMap = teamsData.response[0].teams.map((team: {
-            name: string;
-            id: number;
-          }) => ({ name: team.name, id: team.id }));
+          const teamsMap = teamsData.response.map((item: { team: string[]; }) => item.team);
+          // const teamsMap = teamsData.response[0].teams.map((team: {
+          //   name: string;
+          //   id: number;
+          // }) => ({ name: team.name, id: team.id }));
           setTeams(teamsMap);
         };
       } catch (error) {
@@ -32,7 +33,7 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
       }
     };
     fetchTeams();
-  }, [country, leagueId, season]);
+  }, [leagueId, season]);
   console.log(teams);
   console.log(teamId);
 
@@ -51,7 +52,7 @@ export default function Teams({ country, leagueId, season, failedLogin, error }:
             <p>Selecione um Time</p>
             <select onChange={({ target: { value } }) => setTeamId(value)}>
               {teams.map((team: ITeam) => (
-                <option key={team.id} value={team.id}>{`${team.name} `}</option>
+                <option key={team.id} value={team.id}>{team.name}</option>
               ))}
             </select>
           </>

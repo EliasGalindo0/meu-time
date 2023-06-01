@@ -53,7 +53,6 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
     };
     fetchSeasons();
   }, [country]);
-  console.log(seasons);
 
   if (!leagues.length) {
     return (<Loading />);
@@ -83,7 +82,7 @@ export default function Leagues({ country, failedLogin, error }: ILeague): JSX.E
       {
         (leagueId && season)
           ?
-          <Teams country={country} leagueId={leagueId} season={season} failedLogin={failedLogin} error={error} />
+          <Teams leagueId={leagueId} season={season} failedLogin={failedLogin} error={error} />
           : null
       }
     </section>

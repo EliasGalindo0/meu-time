@@ -1,7 +1,7 @@
 export interface ITeamsProps {
-  country: string;
+  country?: string;
+  error?: string;
   leagueId: number;
   season: string;
   failedLogin: boolean;
-  error?: string;
 };
